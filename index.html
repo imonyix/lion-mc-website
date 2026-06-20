@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onyix MC — Survival SMP Minecraft Server</title>
+<meta name="description" content="Onyix MC is a premium Survival SMP Minecraft server. Custom plugins, active community, 24/7 uptime.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0d12; --bg-2: #0f131a; --bg-3: #161b24;
+  --fg: #e8eaf0; --fg-2: #a0a4b0; --fg-3: #5c606c;
+  --emerald: #2ecc71; --emerald-glow: rgba(46,204,113,0.4); --emerald-2: #27ae60;
+  --gold: #f1c40f; --orange: #e67e22;
+  --border: rgba(255,255,255,0.08); --border-2: rgba(255,255,255,0.12);
+  --glass: rgba(255,255,255,0.03); --glass-2: rgba(255,255,255,0.05);
+  --font-sans: 'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono: 'JetBrains Mono','SF Mono',Monaco,Consolas,monospace;
+}
+[data-theme="light"] {
+  --bg: #f5f7fa; --bg-2: #ffffff; --bg-3: #eef1f5;
+  --fg: #1a1d24; --fg-2: #4a5060; --fg-3: #8088a0;
+  --border: rgba(0,0,0,0.08); --border-2: rgba(0,0,0,0.12);
+  --glass: rgba(0,0,0,0.02); --glass-2: rgba(0,0,0,0.04);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
+body { background:var(--bg); color:var(--fg); font-family:var(--font-sans); font-weight:400; line-height:1.6; overflow-x:hidden; }
+body::before { content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(rgba(46,204,113,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(46,204,113,0.02) 1px,transparent 1px);
+  background-size:48px 48px; mask-image:radial-gradient(ellipse at top,black 20%,transparent 70%); -webkit-mask-image:radial-gradient(ellipse at top,black 20%,transparent 70%); }
+a { color:inherit; text-decoration:none; }
+button { font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+.container { max-width:1200px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+.page { display:none; animation:fadeIn 0.3s ease; }
+.page.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* NAV */
+.nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 0; transition:all 0.3s; border-bottom:1px solid transparent; }
+.nav.scrolled { background:rgba(10,13,18,0.85); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom-color:var(--border); padding:10px 0; }
+[data-theme="light"] .nav.scrolled { background:rgba(255,255,255,0.85); }
+.nav-inner { display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:0 24px; }
+.logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; letter-spacing:-0.03em; cursor:pointer; }
+.logo-icon { width:36px; height:36px; background:linear-gradient(135deg,var(--emerald),var(--emerald-2)); border-radius:8px; display:grid; place-items:center; font-size:20px; box-shadow:0 0 20px var(--emerald-glow); }
+.logo span { color:var(--emerald); }
+.nav-links { display:flex; align-items:center; gap:24px; }
+.nav-link { color:var(--fg-2); font-size:14px; font-weight:500; transition:color 0.2s; cursor:pointer; position:relative; }
+.nav-link:hover, .nav-link.active { color:var(--emerald); }
+.nav-link.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--emerald); border-radius:1px; }
+.nav-right { display:flex; align-items:center; gap:10px; }
+.theme-toggle { width:38px; height:38px; border:1px solid var(--border-2); border-radius:8px; background:var(--glass); display:grid; place-items:center; font-size:16px; transition:all 0.2s; }
+.theme-toggle:hover { border-color:var(--emerald); }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-size:14px; font-weight:600; border-radius:8px; transition:all 0.2s; white-space:nowrap; }
+.btn-primary { background:var(--emerald); color:#000; box-shadow:0 0 0 1px var(--emerald),0 8px 24px -8px var(--emerald-glow); }
+.btn-primary:hover { background:#3edd82; transform:translateY(-1px); }
+.btn-ghost { color:var(--fg-2); border:1px solid var(--border-2); background:var(--glass); }
+.btn-ghost:hover { color:var(--fg); border-color:var(--emerald); }
+.mobile-toggle { display:none; }
+
+/* HERO */
+.hero { min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:120px 24px 60px; position:relative; overflow:hidden; }
+.hero-bg { position:absolute; inset:0; z-index:0; pointer-events:none; }
+.hero-bg::before,.hero-bg::after { content:''; position:absolute; border-radius:50%; filter:blur(80px); opacity:0.4; }
+.hero-bg::before { width:500px; height:500px; background:radial-gradient(circle,var(--emerald) 0%,transparent 70%); top:-5%; left:-10%; animation:float 20s ease-in-out infinite; }
+.hero-bg::after { width:400px; height:400px; background:radial-gradient(circle,var(--gold) 0%,transparent 70%); bottom:-5%; right:-10%; animation:float 25s ease-in-out infinite reverse; }
+@keyframes float { 0%,100%{transform:translate(0,0);} 33%{transform:translate(40px,-30px);} 66%{transform:translate(-30px,30px);} }
+.hero-inner { position:relative; z-index:1; max-width:800px; }
+.badge { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; background:var(--glass-2); border:1px solid var(--border-2); border-radius:999px; font-size:12px; font-weight:500; color:var(--fg-2); margin-bottom:24px; font-family:var(--font-mono); }
+.badge-dot { width:6px; height:6px; background:var(--emerald); border-radius:50%; box-shadow:0 0 8px var(--emerald); animation:pulse 2s ease-in-out infinite; }
+.badge-dot.offline { background:#e74c3c; box-shadow:0 0 8px #e74c3c; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+.hero h1 { font-size:clamp(44px,7vw,84px); font-weight:900; letter-spacing:-0.04em; line-height:0.95; margin-bottom:20px; }
+.hero h1 .grad { background:linear-gradient(135deg,var(--emerald) 0%,var(--gold) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero p { font-size:clamp(16px,2vw,19px); color:var(--fg-2); max-width:580px; margin:0 auto 28px; }
+.ip-box { display:inline-flex; align-items:center; gap:12px; background:var(--bg-3); border:1px solid var(--border-2); border-radius:12px; padding:12px 20px; margin-bottom:24px; }
+.ip-box .ip-label { color:var(--fg-3); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; }
+.ip-box .ip-text { color:var(--emerald); font-family:var(--font-mono); font-size:16px; font-weight:700; }
+.copy-btn { padding:6px 12px; background:var(--emerald); color:#000; border-radius:6px; font-size:12px; font-weight:700; transition:all 0.2s; }
+.copy-btn:hover { background:#3edd82; transform:scale(1.05); }
+.copy-btn.copied { background:var(--gold); }
+.hero-cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:40px; }
+.btn-lg { padding:14px 28px; font-size:15px; }
+.hero-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; max-width:600px; margin:0 auto; }
+.stat-value { font-size:28px; font-weight:800; font-family:var(--font-mono); background:linear-gradient(135deg,var(--emerald) 0%,var(--gold) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat-label { font-size:11px; color:var(--fg-3); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
+.server-status { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; background:var(--glass-2); border:1px solid var(--border); border-radius:999px; font-size:13px; font-family:var(--font-mono); margin-bottom:20px; }
+.status-dot { width:8px; height:8px; border-radius:50%; background:var(--emerald); box-shadow:0 0 8px var(--emerald); animation:pulse 2s infinite; }
+.status-dot.offline { background:#e74c3c; box-shadow:0 0 8px #e74c3c; }
+
+/* SECTIONS */
+.section { padding:80px 0; position:relative; }
+.section-header { text-align:center; max-width:650px; margin:0 auto 48px; }
+.section-tag { display:inline-block; font-family:var(--font-mono); font-size:12px; color:var(--emerald); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; }
+.section-header h2 { font-size:clamp(32px,4.5vw,48px); font-weight:800; letter-spacing:-0.03em; line-height:1.05; margin-bottom:12px; }
+.section-header p { font-size:16px; color:var(--fg-2); }
+
+/* FEATURE CARDS */
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+.feature-card { background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:24px; transition:all 0.3s; position:relative; overflow:hidden; }
+.feature-card::before { content:''; position:absolute; top:0; right:0; width:100px; height:100px; background:radial-gradient(circle,var(--fc,var(--emerald)) 0%,transparent 70%); opacity:0; transition:opacity 0.4s; filter:blur(40px); }
+.feature-card:hover { border-color:var(--border-2); transform:translateY(-2px); }
+.feature-card:hover::before { opacity:0.12; }
+.feature-icon { width:44px; height:44px; border-radius:10px; background:var(--glass-2); border:1px solid var(--border); display:grid; place-items:center; margin-bottom:16px; font-size:22px; }
+.feature-card h3 { font-size:17px; font-weight:700; margin-bottom:6px; }
+.feature-card p { font-size:13px; color:var(--fg-2); line-height:1.5; }
+
+/* JOIN STEPS */
+.join-section { background:var(--bg-2); }
+.join-steps { max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+.join-step { background:var(--glass); border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; gap:20px; align-items:flex-start; transition:all 0.2s; }
+.join-step:hover { border-color:var(--border-2); }
+.step-num { font-family:var(--font-mono); font-size:28px; font-weight:800; background:linear-gradient(135deg,var(--emerald),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent; flex-shrink:0; width:48px; }
+.step-content h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+.step-content p { font-size:14px; color:var(--fg-2); }
+.step-code { display:inline-block; margin-top:8px; padding:6px 12px; background:#000; border:1px solid var(--border); border-radius:6px; font-family:var(--font-mono); font-size:13px; color:var(--emerald); }
+
+/* RULES */
+.rules-section { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; max-width:900px; margin:0 auto; }
+.rule-category { background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:24px; }
+.rule-category h3 { font-size:18px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.rule-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.rule-list li { font-size:14px; color:var(--fg-2); padding-left:20px; position:relative; }
+.rule-list li::before { content:'→'; position:absolute; left:0; color:var(--emerald); }
+
+/* STAFF */
+.staff-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; max-width:900px; margin:0 auto; }
+.staff-card { background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:24px; text-align:center; transition:all 0.2s; }
+.staff-card:hover { border-color:var(--emerald); transform:translateY(-2px); }
+.staff-avatar { width:64px; height:64px; border-radius:12px; margin:0 auto 12px; display:grid; place-items:center; font-size:32px; }
+.staff-name { font-size:16px; font-weight:700; margin-bottom:4px; }
+.staff-role { font-size:13px; font-family:var(--font-mono); }
+.staff-app-cta { text-align:center; margin-top:40px; }
+
+/* GALLERY */
+.gallery-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; max-width:1000px; margin:0 auto; }
+.gallery-item { aspect-ratio:16/9; border-radius:12px; overflow:hidden; position:relative; cursor:pointer; border:1px solid var(--border); }
+.gallery-item:hover { border-color:var(--emerald); transform:scale(1.02); transition:all 0.3s; }
+.gallery-item img { width:100%; height:100%; object-fit:cover; }
+.gallery-label { position:absolute; bottom:0; left:0; right:0; padding:12px; background:linear-gradient(transparent,rgba(0,0,0,0.8)); color:#fff; font-size:14px; font-weight:600; }
+.gallery-placeholder { display:grid; place-items:center; background:linear-gradient(135deg,var(--bg-3),var(--bg-2)); color:var(--fg-3); font-family:var(--font-mono); font-size:13px; }
+
+/* FAQ */
+.faq-list { max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
+.faq-item { background:var(--glass); border:1px solid var(--border); border-radius:10px; overflow:hidden; transition:all 0.2s; }
+.faq-item:hover { border-color:var(--border-2); }
+.faq-item.open { border-color:var(--emerald); }
+.faq-q { padding:16px 20px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-size:15px; font-weight:600; width:100%; text-align:left; }
+.faq-q:hover { color:var(--emerald); }
+.faq-toggle { font-size:18px; color:var(--fg-3); transition:transform 0.2s; flex-shrink:0; }
+.faq-item.open .faq-toggle { transform:rotate(45deg); color:var(--emerald); }
+.faq-a { max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+.faq-item.open .faq-a { max-height:300px; }
+.faq-a-inner { padding:0 20px 16px; font-size:14px; color:var(--fg-2); line-height:1.6; }
+.faq-search { max-width:500px; margin:0 auto 32px; display:flex; gap:8px; }
+.faq-search input { flex:1; padding:12px 16px; background:var(--bg-3); border:1px solid var(--border-2); border-radius:8px; color:var(--fg); font-size:15px; font-family:var(--font-sans); }
+.faq-search input:focus { outline:none; border-color:var(--emerald); }
+
+/* CHANGELOG */
+.changelog-list { max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+.changelog-item { background:var(--glass); border:1px solid var(--border); border-radius:12px; padding:20px 24px; }
+.changelog-version { display:inline-block; font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--emerald); background:rgba(46,204,113,0.1); padding:4px 10px; border-radius:6px; border:1px solid rgba(46,204,113,0.2); margin-bottom:8px; }
+.changelog-date { font-size:12px; color:var(--fg-3); font-family:var(--font-mono); margin-bottom:8px; }
+.changelog-item ul { list-style:none; display:flex; flex-direction:column; gap:4px; }
+.changelog-item li { font-size:14px; color:var(--fg-2); padding-left:16px; position:relative; }
+.changelog-item li::before { content:'+'; position:absolute; left:0; color:var(--emerald); }
+.changelog-item li.fix::before { content:'×'; color:var(--orange); }
+
+/* DISCORD CTA */
+.discord-section { padding:60px 0; text-align:center; position:relative; overflow:hidden; }
+.discord-bg { position:absolute; inset:0; background:radial-gradient(ellipse at center,rgba(88,101,242,0.12) 0%,transparent 60%); z-index:0; }
+.discord-inner { position:relative; z-index:1; max-width:550px; margin:0 auto; padding:0 24px; }
+.discord-inner h2 { font-size:clamp(28px,4vw,40px); font-weight:800; letter-spacing:-0.03em; margin-bottom:10px; }
+.discord-inner p { font-size:16px; color:var(--fg-2); margin-bottom:24px; }
+.btn-discord { background:#5865F2; color:#fff; padding:14px 32px; font-size:15px; font-weight:700; border-radius:8px; display:inline-flex; align-items:center; gap:10px; transition:all 0.2s; box-shadow:0 8px 24px -8px rgba(88,101,242,0.5); }
+.btn-discord:hover { background:#4752c4; transform:translateY(-1px); }
+
+/* FOOTER */
+.footer { border-top:1px solid var(--border); padding:40px 0 24px; background:var(--bg-2); }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:24px; }
+.footer-brand p { font-size:13px; color:var(--fg-3); margin-top:10px; max-width:280px; }
+.footer-col h4 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--fg-3); margin-bottom:12px; }
+.footer-col a { display:block; font-size:14px; color:var(--fg-2); margin-bottom:6px; transition:color 0.2s; cursor:pointer; }
+.footer-col a:hover { color:var(--emerald); }
+.footer-bottom { padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--fg-3); flex-wrap:wrap; gap:8px; }
+
+/* RESPONSIVE */
+@media (max-width:768px) {
+  .nav-links { display:none; }
+  .nav-links.open { display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; background:var(--bg-2); padding:20px 24px; border-bottom:1px solid var(--border); gap:14px; }
+  .mobile-toggle { display:grid; place-items:center; width:40px; height:40px; border:1px solid var(--border); border-radius:8px; background:var(--glass); }
+  .hero { padding:100px 20px 40px; }
+  .hero-stats { grid-template-columns:repeat(2,1fr); gap:16px; }
+  .section { padding:50px 0; }
+  .join-step { flex-direction:column; gap:8px; }
+  .step-num { width:auto; font-size:22px; }
+  .footer-grid { grid-template-columns:1fr 1fr; gap:24px; }
+  .ip-box { flex-direction:column; gap:8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <div class="logo" onclick="navigate('home')">
+      <div class="logo-icon">🌱</div>
+      <span>Onyix<span>MC</span></span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <span class="nav-link" data-page="home" onclick="navigate('home')">Home</span>
+      <span class="nav-link" data-page="features" onclick="navigate('features')">Features</span>
+      <span class="nav-link" data-page="rules" onclick="navigate('rules')">Rules</span>
+      <span class="nav-link" data-page="staff" onclick="navigate('staff')">Staff</span>
+      <span class="nav-link" data-page="gallery" onclick="navigate('gallery')">Gallery</span>
+      <span class="nav-link" data-page="faq" onclick="navigate('faq')">FAQ</span>
+      <span class="nav-link" data-page="changelog" onclick="navigate('changelog')">Changelog</span>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+      <a href="#" class="btn btn-primary" onclick="navigate('home')">Play Now</a>
+      <button class="mobile-toggle" id="mobileToggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HOME PAGE ============ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+      <div class="server-status" id="serverStatus">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Checking server status...</span>
+      </div>
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span>Survival SMP · Java + Bedrock · 1.21.4</span>
+      </div>
+      <h1>Build. Survive.<br><span class="grad">Thrive.</span></h1>
+      <p>Onyix MC is a community-driven Survival SMP server with custom plugins, land claiming, an active economy, and zero pay-to-win. Just pure survival Minecraft.</p>
+      <div class="ip-box">
+        <span class="ip-label">Server IP</span>
+        <span class="ip-text">node1.hostingkarle.com:25565</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyIP()">Copy</button>
+      </div>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary btn-lg" onclick="navigate('features')">🎮 Explore Features</a>
+        <a href="#" class="btn btn-ghost btn-lg" onclick="navigate('home'); scrollToJoin()">📋 How to Join</a>
+      </div>
+      <div class="hero-stats" id="heroStats">
+        <div><div class="stat-value" id="statPlayers">—</div><div class="stat-label">Players Online</div></div>
+        <div><div class="stat-value" id="statMax">—</div><div class="stat-label">Max Slots</div></div>
+        <div><div class="stat-value">1.21.4</div><div class="stat-label">Version</div></div>
+        <div><div class="stat-value">0</div><div class="stat-label">Pay to Win</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="join">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">GET STARTED</div>
+        <h2>Join in 3 steps.</h2>
+        <p>It takes less than a minute to start playing.</p>
+      </div>
+      <div class="join-steps">
+        <div class="join-step"><div class="step-num">01</div><div class="step-content"><h3>Open Minecraft Java Edition</h3><p>Launch Minecraft Java Edition 1.21.4 (or any 1.21.x version).</p></div></div>
+        <div class="join-step"><div class="step-num">02</div><div class="step-content"><h3>Add Server</h3><p>Multiplayer → Add Server → Enter the IP below.</p><div class="step-code">node1.hostingkarle.com:25565</div></div></div>
+        <div class="join-step"><div class="step-num">03</div><div class="step-content"><h3>Join and Play!</h3><p>Click "Join Server". Type /spawn for info, /rules for rules, /help for commands.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--bg-2)">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">FEATURES</div>
+        <h2>Why Onyix MC?</h2>
+        <p>Click any feature to learn more on the dedicated features page.</p>
+      </div>
+      <div class="features-grid" id="homeFeatures"></div>
+      <div style="text-align:center; margin-top:32px;">
+        <a href="#" class="btn btn-ghost btn-lg" onclick="navigate('features')">View All Features →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="discord-section">
+    <div class="discord-bg"></div>
+    <div class="discord-inner">
+      <div style="font-size:48px; margin-bottom:16px;">💬</div>
+      <h2>Join the community.</h2>
+      <p>Get help, share builds, vote for rewards, and apply for staff — all in our Discord.</p>
+      <a href="#" class="btn-discord">Join Discord</a>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FEATURES PAGE ============ -->
+<div class="page" id="page-features">
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">SERVER FEATURES</div>
+        <h2>Everything Onyix MC offers.</h2>
+        <p>Carefully selected features that enhance survival gameplay without ruining the vanilla feel.</p>
+      </div>
+      <div class="features-grid" id="allFeatures"></div>
+    </div>
+  </section>
+  <section class="section" style="background:var(--bg-2)">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">CUSTOM PLUGINS</div>
+        <h2>Built just for Onyix MC.</h2>
+        <p>We develop our own plugins tailored to our community's needs.</p>
+      </div>
+      <div class="features-grid" id="customPlugins"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ RULES PAGE ============ -->
+<div class="page" id="page-rules">
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">SERVER RULES</div>
+        <h2>Keep it fun for everyone.</h2>
+        <p>Breaking these rules results in warnings, mutes, jails, or bans depending on severity.</p>
+      </div>
+      <div class="rules-section" id="rulesGrid"></div>
+      <div style="text-align:center; margin-top:40px;">
+        <p style="color:var(--fg-3); font-size:14px;">Staff have final say on all rule interpretations. If something feels wrong, it probably is. Use common sense.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ STAFF PAGE ============ -->
+<div class="page" id="page-staff">
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">OUR TEAM</div>
+        <h2>Meet the staff.</h2>
+        <p>The people who keep Onyix MC running smoothly.</p>
+      </div>
+      <div class="staff-grid" id="staffGrid"></div>
+      <div class="staff-app-cta">
+        <div style="background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:32px; max-width:500px; margin:0 auto;">
+          <h3 style="font-size:22px; font-weight:800; margin-bottom:8px;">Want to join the team?</h3>
+          <p style="color:var(--fg-2); margin-bottom:20px;">We're always looking for dedicated players to join our staff team. Apply via our Discord server.</p>
+          <a href="#" class="btn btn-primary btn-lg">Apply for Staff</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ GALLERY PAGE ============ -->
+<div class="page" id="page-gallery">
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">GALLERY</div>
+        <h2>Player builds & server.</h2>
+        <p>Amazing creations from the Onyix MC community. Want yours featured? Share in Discord!</p>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FAQ PAGE ============ -->
+<div class="page" id="page-faq">
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">FAQ</div>
+        <h2>Frequently asked questions.</h2>
+      </div>
+      <div class="faq-search">
+        <input type="text" id="faqSearchInput" placeholder="Search questions..." oninput="filterFAQ()">
+      </div>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CHANGELOG PAGE ============ -->
+<div class="page" id="page-changelog">
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">CHANGELOG</div>
+        <h2>Server updates.</h2>
+        <p>Stay up to date with the latest changes and improvements.</p>
+      </div>
+      <div class="changelog-list" id="changelogList"></div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-icon">🌱</div><span>Onyix<span>MC</span></span></div>
+        <p>A community-driven Survival SMP Minecraft server. No pay-to-win, just pure survival.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Server</h4>
+        <a onclick="navigate('features')">Features</a>
+        <a onclick="navigate('rules')">Rules</a>
+        <a onclick="navigate('faq')">FAQ</a>
+        <a onclick="navigate('changelog')">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a>Discord</a>
+        <a>Vote</a>
+        <a onclick="navigate('staff')">Staff</a>
+        <a onclick="navigate('gallery')">Gallery</a>
+      </div>
+      <div class="footer-col">
+        <h4>Server IP</h4>
+        <a style="font-family:var(--font-mono); color:var(--emerald); cursor:pointer;" onclick="copyIP()">node1.hostingkarle.com:25565</a>
+        <a style="color:var(--fg-3); font-size:12px;">Click to copy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Onyix MC. Not affiliated with Mojang or Microsoft.</div>
+      <div>Minecraft is a trademark of Mojang Studios.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============ NAVIGATION ============
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
+  document.getElementById('navLinks').classList.remove('open');
+  window.scrollTo(0, 0);
+  history.replaceState(null, '', '#' + page);
+}
+
+// Handle back/forward
+window.addEventListener('popstate', () => {
+  const page = location.hash.substring(1) || 'home';
+  navigate(page);
+});
+
+// Load page from URL hash
+window.addEventListener('load', () => {
+  const page = location.hash.substring(1) || 'home';
+  navigate(page);
+});
+
+function scrollToJoin() { document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' }); }
+
+// ============ NAV SCROLL ============
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ============ THEME TOGGLE ============
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  if (next === 'dark') { html.removeAttribute('data-theme'); }
+  else { html.setAttribute('data-theme', 'light'); }
+  document.getElementById('themeToggle').textContent = next === 'light' ? '☀️' : '🌙';
+  localStorage.setItem('theme', next);
+}
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeToggle').textContent = '☀️'; }
+});
+
+// ============ COPY IP ============
+function copyIP() {
+  navigator.clipboard.writeText('node1.hostingkarle.com:25565').then(() => {
+    const btn = document.getElementById('copyBtn');
+    if (btn) { btn.textContent = 'Copied!'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000); }
+  });
+}
+
+// ============ SERVER STATUS ============
+async function checkServerStatus() {
+  const statusText = document.getElementById('statusText');
+  const statusDot = document.getElementById('statusDot');
+  const statPlayers = document.getElementById('statPlayers');
+  const statMax = document.getElementById('statMax');
+
+  try {
+    // Try mcsrvstat.us API
+    const res = await fetch('https://api.mcsrvstat.us/3/node1.hostingkarle.com:25565');
+    const data = await res.json();
+
+    if (data.online) {
+      statusText.textContent = `Online · ${data.players.online}/${data.players.max} players`;
+      statusDot.classList.remove('offline');
+      if (statPlayers) statPlayers.textContent = data.players.online;
+      if (statMax) statMax.textContent = data.players.max;
+    } else {
+      statusText.textContent = 'Server is offline';
+      statusDot.classList.add('offline');
+      if (statPlayers) statPlayers.textContent = '0';
+      if (statMax) statMax.textContent = '—';
+    }
+  } catch (e) {
+    statusText.textContent = 'Unable to check status';
+    statusDot.classList.add('offline');
+    if (statPlayers) statPlayers.textContent = '?';
+    if (statMax) statMax.textContent = '?';
+  }
+}
+checkServerStatus();
+setInterval(checkServerStatus, 60000); // refresh every 60s
+
+// ============ DATA ============
+const FEATURES = [
+  { icon:'🏠', color:'#2ecc71', title:'Land Claiming', desc:'Protect your builds with golden shovel claiming. No griefers, no raiding.' },
+  { icon:'⚔️', color:'#e74c3c', title:'Survival Focus', desc:'Pure vanilla survival. No overloaded plugins, just clean gameplay.' },
+  { icon:'🛡️', color:'#3498db', title:'Anti-Cheat', desc:'Active staff + automated detection. Hackers and dupers banned fast.' },
+  { icon:'💎', color:'#9b59b6', title:'Player Economy', desc:'Trade with other players. Set up shops, buy, sell, thrive.' },
+  { icon:'🌍', color:'#f1c40f', title:'Large World', desc:'Massive pre-generated world with plenty of unexplored land to claim.' },
+  { icon:'🤝', color:'#e67e22', title:'Friendly Community', desc:'Active Discord, helpful staff, and regular events with rewards.' },
+  { icon:'🔧', color:'#1abc9c', title:'Quality Plugins', desc:'Homes, RTP, TPA, economy, and more — without ruining vanilla feel.' },
+  { icon:'⏰', color:'#e91e63', title:'24/7 Uptime', desc:'Dedicated hosting with 99.9% uptime. Your builds are always safe.' },
+  { icon:'🎁', color:'#00bcd4', title:'Voting Rewards', desc:'Vote for the server on listing sites and earn in-game rewards.' },
+  { icon:'🏗️', color:'#ff9800', title:'No World Resets', desc:'The world is permanent. Only the End resets for fresh elytra.' },
+  { icon:'📊', color:'#4caf50', title:'Player Stats', desc:'Track your playtime, blocks placed, mobs killed, and more.' },
+  { icon:'🎨', color:'#9c27b0', title:'Custom Textures', desc:'Custom resource pack adds unique items like the Magma Armor set.' },
+];
+
+const PLUGINS = [
+  { icon:'🔒', color:'#2ecc71', title:'GhostAdmin', desc:'Advanced admin panel with jail system, freeze, vanish, cheater detection, and 24+ commands.' },
+  { icon:'🔥', color:'#e67e22', title:'MagmaItems', desc:'Custom magma armor set + sword with crafting recipes, set bonuses, and custom textures.' },
+  { icon:'🎵', color:'#9b59b6', title:'CustomMusic', desc:'Custom music plugin that plays songs via resource pack. Players can toggle music on/off.' },
+  { icon:'🏠', color:'#3498db', title:'GriefPrevention', desc:'Land claiming system. Protect your builds from griefers with golden shovel.' },
+];
+
+const STAFF = [
+  { name:'OnyixMC', role:'Owner', emoji:'👑', color:'#f1c40f' },
+  { name:'Staff Slot', role:'Admin', emoji:'🛡️', color:'#e74c3c' },
+  { name:'Staff Slot', role:'Moderator', emoji:'⚖️', color:'#3498db' },
+  { name:'Staff Slot', role:'Moderator', emoji:'⚖️', color:'#3498db' },
+  { name:'Staff Slot', role:'Helper', emoji:'🤝', color:'#2ecc71' },
+  { name:'Staff Slot', role:'Helper', emoji:'🤝', color:'#2ecc71' },
+];
+
+const RULES = {
+  '🎮 Gameplay': [
+    'No griefing or raiding claimed land.',
+    'No hacking, x-ray, or unfair mods.',
+    'No exploiting bugs or duping items.',
+    'No alt accounts for ban evasion.',
+    'PvP only in designated arenas or with mutual consent.',
+  ],
+  '💬 Chat': [
+    'No spamming, advertising, or NSFW content.',
+    'Be respectful — no slurs, harassment, or bullying.',
+    'Keep chat in English (main chat).',
+    'No political or religious debates.',
+    'No sharing personal info about other players.',
+  ],
+  '🏗️ Building': [
+    'No builds within 100 blocks of another player\'s claim without permission.',
+    'No offensive or inappropriate builds.',
+    'No lag machines or redstone contraptions that hurt server TPS.',
+    'Keep the spawn area clean — no 1x1 towers or random holes.',
+    'Report abandoned builds to staff for removal.',
+  ],
+};
+
+const FAQS = [
+  { q:'What version is the server?', a:'We run Minecraft Java Edition 1.21.4. You can join with any 1.21.x version.' },
+  { q:'Can I play on Bedrock (mobile/console)?', a:'Bedrock support may be available via Geyser. Check our Discord for the Bedrock port.' },
+  { q:'Is there a store or pay-to-win?', a:'No. Onyix MC is completely free. No store, no pay-to-win. Everyone plays equally.' },
+  { q:'How do I claim land?', a:'Use a golden shovel to claim. Right-click two corners to define your claim. Type /claim in-game for help.' },
+  { q:'What plugins does the server use?', a:'EssentialsX, GriefPrevention, CoreProtect, economy, custom GhostAdmin + MagmaItems plugins, and QoL plugins.' },
+  { q:'How do I report a player or bug?', a:'Join our Discord and use #report. For urgent issues, ping staff. Screenshots help!' },
+  { q:'Is the world reset often?', a:'No. The world is permanent. Only the End dimension resets periodically for fresh elytra.' },
+  { q:'How do I vote for rewards?', a:'Use /vote in-game to get voting links. Each vote gives you rewards like diamonds, XP, and crate keys.' },
+  { q:'How do I become staff?', a:'Apply through our Discord server. We look for active, helpful players who know the rules.' },
+  { q:'What are the custom items?', a:'We have the Magma Armor set and Magma Blade sword — craftable items with unique textures and set bonuses.' },
+];
+
+const CHANGELOG = [
+  { version:'v2.1.0', date:'2026-06-20', items:[
+    {type:'add', text:'Added MagmaItems plugin with custom armor + sword'},
+    {type:'add', text:'Added CustomMusic plugin'},
+    {type:'add', text:'Voting rewards system'},
+  ]},
+  { version:'v2.0.0', date:'2026-06-19', items:[
+    {type:'add', text:'GhostAdmin plugin with jail system, freeze, vanish'},
+    {type:'add', text:'24+ admin commands'},
+    {type:'add', text:'Cheater detection with X-Ray traps'},
+    {type:'fix', text:'Fixed server stability issues'},
+  ]},
+  { version:'v1.0.0', date:'2026-06-15', items:[
+    {type:'add', text:'Server launched!'},
+    {type:'add', text:'Land claiming enabled'},
+    {type:'add', text:'Economy system setup'},
+    {type:'add', text:'Custom spawn built'},
+  ]},
+];
+
+const GALLERY = [
+  { label:'Spawn Area', grad:'linear-gradient(135deg,#1a2a1a,#0a1a0a)' },
+  { label:'Player Build', grad:'linear-gradient(135deg,#1a1a2a,#0a0a1a)' },
+  { label:'Community Town', grad:'linear-gradient(135deg,#2a1a1a,#1a0a0a)' },
+  { label:'Mining Base', grad:'linear-gradient(135deg,#2a2a1a,#1a1a0a)' },
+  { label:'Survival Base', grad:'linear-gradient(135deg,#1a2a2a,#0a1a1a)' },
+  { label:'Event Arena', grad:'linear-gradient(135deg,#2a1a2a,#1a0a1a)' },
+];
+
+// ============ RENDER ============
+document.getElementById('homeFeatures').innerHTML = FEATURES.slice(0, 6).map(f => `
+  <div class="feature-card" style="--fc:${f.color}" onclick="navigate('features')" style="cursor:pointer">
+    <div class="feature-icon">${f.icon}</div>
+    <h3>${f.title}</h3>
+    <p>${f.desc}</p>
+  </div>`).join('');
+
+document.getElementById('allFeatures').innerHTML = FEATURES.map(f => `
+  <div class="feature-card" style="--fc:${f.color}">
+    <div class="feature-icon">${f.icon}</div>
+    <h3>${f.title}</h3>
+    <p>${f.desc}</p>
+  </div>`).join('');
+
+document.getElementById('customPlugins').innerHTML = PLUGINS.map(p => `
+  <div class="feature-card" style="--fc:${p.color}">
+    <div class="feature-icon">${p.icon}</div>
+    <h3>${p.title}</h3>
+    <p>${p.desc}</p>
+  </div>`).join('');
+
+document.getElementById('rulesGrid').innerHTML = Object.entries(RULES).map(([category, rules]) => `
+  <div class="rule-category">
+    <h3>${category}</h3>
+    <ul class="rule-list">
+      ${rules.map(r => `<li>${r}</li>`).join('')}
+    </ul>
+  </div>`).join('');
+
+document.getElementById('staffGrid').innerHTML = STAFF.map(s => `
+  <div class="staff-card">
+    <div class="staff-avatar" style="background:${s.color}20; border:2px solid ${s.color};">${s.emoji}</div>
+    <div class="staff-name">${s.name}</div>
+    <div class="staff-role" style="color:${s.color};">${s.role}</div>
+  </div>`).join('');
+
+document.getElementById('galleryGrid').innerHTML = GALLERY.map(g => `
+  <div class="gallery-item gallery-placeholder" style="background:${g.grad}">
+    <div>${g.label}</div>
+    <div class="gallery-label">${g.label}</div>
+  </div>`).join('');
+
+document.getElementById('faqList').innerHTML = FAQS.map((f, i) => `
+  <div class="faq-item" data-idx="${i}" data-search="${(f.q + ' ' + f.a).toLowerCase()}">
+    <button class="faq-q">
+      <span>${f.q}</span>
+      <span class="faq-toggle">✕</span>
+    </button>
+    <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+  </div>`).join('');
+
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => item.classList.toggle('open'));
+});
+
+function filterFAQ() {
+  const q = document.getElementById('faqSearchInput').value.toLowerCase();
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const match = item.dataset.search.includes(q);
+    item.style.display = match ? '' : 'none';
+  });
+}
+
+document.getElementById('changelogList').innerHTML = CHANGELOG.map(c => `
+  <div class="changelog-item">
+    <div class="changelog-version">${c.version}</div>
+    <div class="changelog-date">${c.date}</div>
+    <ul>${c.items.map(i => `<li class="${i.type === 'fix' ? 'fix' : ''}">${i.text}</li>`).join('')}</ul>
+  </div>`).join('');
+</script>
+</body>
+</html>
