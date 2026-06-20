@@ -396,141 +396,273 @@ button { font-family:inherit; cursor:pointer; border:none; background:none; colo
 
 <!-- ============ STORE PAGE ============ -->
 <div class="page" id="page-store">
+  <style>
+    .store-hero { text-align:center; padding:40px 0; }
+    .store-hero h2 { font-size:clamp(28px,4vw,42px); font-weight:900; letter-spacing:-0.03em; margin-bottom:8px; }
+    .store-hero p { color:var(--fg-2); max-width:500px; margin:0 auto; }
+    .p2w-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 16px; background:rgba(46,204,113,0.1); border:1px solid var(--emerald); border-radius:999px; font-size:13px; font-weight:600; color:var(--emerald); margin-bottom:24px; }
+
+    .store-section-title { text-align:center; font-size:22px; font-weight:800; margin:48px 0 24px; display:flex; align-items:center; justify-content:center; gap:10px; }
+    .store-section-title span { font-size:28px; }
+
+    .rank-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; max-width:1100px; margin:0 auto; }
+    .rank-card { background:var(--glass); border:1px solid var(--border); border-radius:16px; padding:0; overflow:hidden; transition:all 0.3s; position:relative; }
+    .rank-card:hover { transform:translateY(-4px); border-color:var(--rc,var(--emerald)); box-shadow:0 12px 40px -8px var(--rc,var(--emerald-glow)); }
+    .rank-card.best { border:2px solid var(--emerald); }
+    .rank-best-tag { position:absolute; top:0; left:0; right:0; background:var(--emerald); color:#000; font-size:11px; font-weight:800; text-align:center; padding:5px 0; text-transform:uppercase; letter-spacing:0.1em; }
+    .rank-header { padding:32px 20px 16px; text-align:center; background:linear-gradient(180deg,var(--rc-bg,rgba(46,204,113,0.05)) 0%,transparent 100%); }
+    .rank-icon { font-size:40px; margin-bottom:8px; }
+    .rank-name { font-size:20px; font-weight:800; margin-bottom:4px; }
+    .rank-tier { font-size:11px; font-weight:600; color:var(--rc,var(--emerald)); text-transform:uppercase; letter-spacing:0.15em; }
+    .rank-price { font-size:36px; font-weight:900; color:var(--fg); margin:12px 0 4px; }
+    .rank-price-old { font-size:16px; color:var(--fg-3); text-decoration:line-through; }
+    .rank-features { list-style:none; padding:16px 20px; }
+    .rank-features li { font-size:13px; color:var(--fg-2); padding:5px 0; padding-left:24px; position:relative; }
+    .rank-features li::before { content:'\2713'; position:absolute; left:0; color:var(--emerald); font-weight:700; }
+    .rank-features li.no::before { content:'\2717'; color:var(--fg-3); }
+    .rank-features li.no { color:var(--fg-3); }
+    .rank-btn { display:block; margin:0 20px 20px; padding:12px; text-align:center; border-radius:8px; font-size:14px; font-weight:700; transition:all 0.2s; cursor:pointer; }
+    .rank-btn-primary { background:var(--rc,var(--emerald)); color:#000; }
+    .rank-btn-primary:hover { filter:brightness(1.1); transform:scale(1.02); }
+    .rank-btn-ghost { background:var(--glass-2); color:var(--fg); border:1px solid var(--border-2); }
+    .rank-btn-ghost:hover { border-color:var(--rc,var(--emerald)); }
+
+    .crate-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; max-width:1000px; margin:0 auto; }
+    .crate-card { background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:24px 16px; text-align:center; transition:all 0.3s; position:relative; overflow:hidden; }
+    .crate-card:hover { transform:translateY(-3px); border-color:var(--cc,var(--gold)); box-shadow:0 8px 30px -8px var(--cc,var(--gold)); }
+    .crate-card::before { content:''; position:absolute; top:-40px; right:-40px; width:100px; height:100px; background:radial-gradient(circle,var(--cc,var(--gold)) 0%,transparent 70%); opacity:0.1; }
+    .crate-icon { font-size:36px; margin-bottom:8px; }
+    .crate-name { font-size:16px; font-weight:700; margin-bottom:4px; }
+    .crate-desc { font-size:12px; color:var(--fg-2); margin-bottom:12px; min-height:32px; }
+    .crate-price { font-size:24px; font-weight:900; color:var(--cc,var(--gold)); margin-bottom:12px; }
+    .crate-price.free { color:var(--emerald); }
+
+    .bundle-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; max-width:800px; margin:0 auto; }
+    .bundle-card { background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:24px; display:flex; gap:20px; align-items:center; transition:all 0.3s; }
+    .bundle-card:hover { border-color:var(--emerald); transform:translateY(-2px); }
+    .bundle-icon { font-size:40px; flex-shrink:0; }
+    .bundle-info { flex:1; }
+    .bundle-name { font-size:17px; font-weight:700; margin-bottom:4px; }
+    .bundle-desc { font-size:13px; color:var(--fg-2); margin-bottom:8px; }
+    .bundle-prices { display:flex; align-items:center; gap:8px; }
+    .bundle-old { font-size:16px; color:var(--fg-3); text-decoration:line-through; }
+    .bundle-new { font-size:24px; font-weight:900; color:var(--emerald); }
+    .bundle-save { font-size:11px; font-weight:700; color:var(--gold); background:rgba(241,196,15,0.1); padding:2px 8px; border-radius:4px; }
+
+    .cosmetic-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; max-width:900px; margin:0 auto; }
+    .cosmetic-card { background:var(--glass); border:1px solid var(--border); border-radius:12px; padding:20px 12px; text-align:center; transition:all 0.2s; }
+    .cosmetic-card:hover { border-color:var(--emerald); transform:translateY(-2px); }
+    .cosmetic-icon { font-size:28px; margin-bottom:6px; }
+    .cosmetic-name { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .cosmetic-price { font-size:18px; font-weight:800; color:var(--gold); }
+
+    .store-cta { text-align:center; margin:48px 0; }
+    .store-cta-box { max-width:500px; margin:0 auto; padding:32px; background:var(--glass); border:1px solid var(--border); border-radius:16px; }
+  </style>
+
   <section class="section" style="padding-top:120px;">
     <div class="container">
-      <div class="section-header">
-        <div class="section-tag">SUPPORT THE SERVER</div>
-        <h2>Lion MC Store</h2>
-        <p>Support the server and get fun cosmetics. <strong style="color:var(--emerald);">No pay-to-win.</strong> All items are cosmetic or convenience only.</p>
+      <!-- HERO -->
+      <div class="store-hero">
+        <div class="p2w-badge">\u2696\ufe0f No Pay-to-Win \u2014 Cosmetic Only</div>
+        <h2>Support Lion MC</h2>
+        <p>Every purchase keeps the server running. All items are <strong style="color:var(--emerald);">cosmetic or convenience</strong> \u2014 zero gameplay advantage.</p>
       </div>
 
-      <!-- Crate section -->
-      <div style="margin-bottom:48px;">
-        <h3 style="text-align:center;font-size:24px;font-weight:800;margin-bottom:24px;">📦 Crates</h3>
-        <div class="features-grid">
-          <div class="feature-card" style="--fc:#f1c40f;text-align:center;">
-            <div class="feature-icon" style="margin:0 auto 16px;font-size:32px;">📦</div>
-            <h3>Voter Crate Key</h3>
-            <p style="font-size:14px;color:var(--fg-2);margin-bottom:16px;">Earned by voting. Free!</p>
-            <div style="font-size:28px;font-weight:800;color:var(--emerald);margin-bottom:12px;">FREE</div>
-            <p style="font-size:12px;color:var(--fg-3);">Vote daily with /vote to get keys. Contains cosmetics, tags, and QoL items.</p>
+      <!-- RANKS -->
+      <div class="store-section-title"><span>\ud83d\udc51</span> Cosmetic Ranks</div>
+      <div class="rank-grid">
+
+        <!-- Lion Cub -->
+        <div class="rank-card" style="--rc:#2ecc71; --rc-bg:rgba(46,204,113,0.06);">
+          <div class="rank-header">
+            <div class="rank-icon">\ud83e\udd81</div>
+            <div class="rank-tier">Starter</div>
+            <div class="rank-name">Lion Cub</div>
+            <div class="rank-price">\u00a32.99</div>
+            <div class="rank-price-old">\u00a34.99</div>
           </div>
-          <div class="feature-card" style="--fc:#e67e22;text-align:center;">
-            <div class="feature-icon" style="margin:0 auto 16px;font-size:32px;">🎁</div>
-            <h3>Common Crate Key</h3>
-            <p style="font-size:14px;color:var(--fg-2);margin-bottom:16px;">Basic cosmetic crate</p>
-            <div style="font-size:28px;font-weight:800;color:var(--gold);margin-bottom:12px;">£2.99</div>
-            <p style="font-size:12px;color:var(--fg-3);">Contains: Nickname colors, particle trails, chat tags, and common cosmetics.</p>
+          <ul class="rank-features">
+            <li>Green chat color</li>
+            <li>/hat command</li>
+            <li>3 home slots</li>
+            <li>Lion Cub prefix</li>
+            <li class="no">No crate keys</li>
+            <li class="no">No particle effects</li>
+          </ul>
+          <a href="#" class="rank-btn rank-btn-ghost">Choose Lion Cub</a>
+        </div>
+
+        <!-- Lion -->
+        <div class="rank-card" style="--rc:#3498db; --rc-bg:rgba(52,152,219,0.06);">
+          <div class="rank-header">
+            <div class="rank-icon">\ud83d\udc05</div>
+            <div class="rank-tier">Popular</div>
+            <div class="rank-name">Lion</div>
+            <div class="rank-price">\u00a35.99</div>
+            <div class="rank-price-old">\u00a38.99</div>
           </div>
-          <div class="feature-card" style="--fc:#9b59b6;text-align:center;">
-            <div class="feature-icon" style="margin:0 auto 16px;font-size:32px;">💜</div>
-            <h3>Rare Crate Key</h3>
-            <p style="font-size:14px;color:var(--fg-2);margin-bottom:16px;">Premium cosmetic crate</p>
-            <div style="font-size:28px;font-weight:800;color:var(--gold);margin-bottom:12px;">£5.99</div>
-            <p style="font-size:12px;color:var(--fg-3);">Contains: Rare particles, glow effects, custom join messages, and more.</p>
+          <ul class="rank-features">
+            <li>Blue chat color</li>
+            <li>/hat + /nick</li>
+            <li>5 home slots</li>
+            <li>Lion prefix</li>
+            <li>2 Common crate keys</li>
+            <li class="no">No particle effects</li>
+          </ul>
+          <a href="#" class="rank-btn rank-btn-ghost">Choose Lion</a>
+        </div>
+
+        <!-- Lion King -->
+        <div class="rank-card best" style="--rc:#9b59b6; --rc-bg:rgba(155,89,182,0.06);">
+          <div class="rank-best-tag">\u2b50 Best Value</div>
+          <div class="rank-header" style="padding-top:40px;">
+            <div class="rank-icon">\ud83d\udc51</div>
+            <div class="rank-tier">Premium</div>
+            <div class="rank-name">Lion King</div>
+            <div class="rank-price">\u00a39.99</div>
+            <div class="rank-price-old">\u00a314.99</div>
           </div>
-          <div class="feature-card" style="--fc:#e74c3c;text-align:center;">
-            <div class="feature-icon" style="margin:0 auto 16px;font-size:32px;">🔥</div>
-            <h3>Mythic Crate Key</h3>
-            <p style="font-size:14px;color:var(--fg-2);margin-bottom:16px;">Top-tier cosmetic crate</p>
-            <div style="font-size:28px;font-weight:800;color:var(--gold);margin-bottom:12px;">£9.99</div>
-            <p style="font-size:12px;color:var(--fg-3);">Contains: Mythical wings, custom death messages, unique prefix, and rare cosmetics.</p>
+          <ul class="rank-features">
+            <li>Purple chat color</li>
+            <li>/hat + /nick + /particle</li>
+            <li>10 home slots</li>
+            <li>Lion King prefix</li>
+            <li>3 Rare crate keys</li>
+            <li>Custom join message</li>
+          </ul>
+          <a href="#" class="rank-btn rank-btn-primary">Choose Lion King</a>
+        </div>
+
+        <!-- Lion Legend -->
+        <div class="rank-card" style="--rc:#f1c40f; --rc-bg:rgba(241,196,15,0.06);">
+          <div class="rank-header">
+            <div class="rank-icon">\ud83c\udfc6</div>
+            <div class="rank-tier">Ultimate</div>
+            <div class="rank-name">Lion Legend</div>
+            <div class="rank-price">\u00a316.99</div>
+            <div class="rank-price-old">\u00a324.99</div>
           </div>
+          <ul class="rank-features">
+            <li>Gold chat color</li>
+            <li>All cosmetic commands</li>
+            <li>15 home slots</li>
+            <li>Lion Legend prefix</li>
+            <li>5 Mythic crate keys</li>
+            <li>Custom wing particles</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#" class="rank-btn rank-btn-ghost">Choose Lion Legend</a>
+        </div>
+
+      </div>
+
+      <!-- CRATES -->
+      <div class="store-section-title"><span>\ud83d\udce6</span> Treasure Crates</div>
+      <div class="crate-grid">
+        <div class="crate-card" style="--cc:#2ecc71;">
+          <div class="crate-icon">\ud83d\udce6</div>
+          <div class="crate-name">Voter Crate</div>
+          <div class="crate-desc">Free with /vote. Cosmetics, tags, QoL items.</div>
+          <div class="crate-price free">FREE</div>
+          <a href="#" class="rank-btn rank-btn-ghost" style="margin:0;">Vote Now</a>
+        </div>
+        <div class="crate-card" style="--cc:#e67e22;">
+          <div class="crate-icon">\ud83c\udf81</div>
+          <div class="crate-name">Common Crate</div>
+          <div class="crate-desc">Name colors, trails, chat tags.</div>
+          <div class="crate-price">\u00a31.49</div>
+          <a href="#" class="rank-btn rank-btn-ghost" style="margin:0;background:rgba(230,126,34,0.15);color:#e67e22;border-color:rgba(230,126,34,0.3);">Buy Key</a>
+        </div>
+        <div class="crate-card" style="--cc:#9b59b6;">
+          <div class="crate-icon">\ud83d\udc9c</div>
+          <div class="crate-name">Rare Crate</div>
+          <div class="crate-desc">Rare particles, glow, join messages.</div>
+          <div class="crate-price">\u00a32.99</div>
+          <a href="#" class="rank-btn rank-btn-ghost" style="margin:0;background:rgba(155,89,182,0.15);color:#9b59b6;border-color:rgba(155,89,182,0.3);">Buy Key</a>
+        </div>
+        <div class="crate-card" style="--cc:#e74c3c;">
+          <div class="crate-icon">\ud83d\udd25</div>
+          <div class="crate-name">Mythic Crate</div>
+          <div class="crate-desc">Wings, death messages, unique prefix.</div>
+          <div class="crate-price">\u00a34.99</div>
+          <a href="#" class="rank-btn rank-btn-ghost" style="margin:0;background:rgba(231,76,60,0.15);color:#e74c3c;border-color:rgba(231,76,60,0.3);">Buy Key</a>
+        </div>
+        <div class="crate-card" style="--cc:#f1c40f;">
+          <div class="crate-icon">\u2b50</div>
+          <div class="crate-name">Legendary Crate</div>
+          <div class="crate-desc">Exclusive cosmetics, animated tags, aurora effects.</div>
+          <div class="crate-price">\u00a37.99</div>
+          <a href="#" class="rank-btn rank-btn-ghost" style="margin:0;background:rgba(241,196,15,0.15);color:#f1c40f;border-color:rgba(241,196,15,0.3);">Buy Key</a>
         </div>
       </div>
 
-      <!-- Ranks section -->
-      <div style="margin-bottom:48px;">
-        <h3 style="text-align:center;font-size:24px;font-weight:800;margin-bottom:24px;">👑 Cosmetic Ranks</h3>
-        <div class="features-grid">
-          <div class="feature-card" style="--fc:#2ecc71;text-align:center;border:2px solid var(--border);">
-            <div style="font-size:14px;font-weight:600;color:var(--emerald);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Starter</div>
-            <h3>Lion Cub</h3>
-            <div style="font-size:32px;font-weight:900;color:var(--emerald);margin:12px 0;">£4.99</div>
-            <ul style="list-style:none;text-align:left;margin-bottom:20px;font-size:13px;color:var(--fg-2);">
-              <li style="padding:4px 0;">✅ Green chat color</li>
-              <li style="padding:4px 0;">✅ /hat command</li>
-              <li style="padding:4px 0;">✅ 3 home slots</li>
-              <li style="padding:4px 0;">✅ Lion Cub prefix</li>
-              <li style="padding:4px 0;color:var(--fg-3);">❌ No crate keys</li>
-            </ul>
-            <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;">Choose Lion Cub</a>
+      <!-- COSMETICS -->
+      <div class="store-section-title"><span>\ud83c\udfa8</span> Individual Cosmetics</div>
+      <div class="cosmetic-grid">
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83d\udd8\ufe0f</div><div class="cosmetic-name">Nickname Color</div><div class="cosmetic-price">\u00a30.99</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\u2728</div><div class="cosmetic-name">Particle Trail</div><div class="cosmetic-price">\u00a31.49</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83d\udcac</div><div class="cosmetic-name">Chat Tag</div><div class="cosmetic-price">\u00a30.99</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83d\ude80</div><div class="cosmetic-name">Custom Join Msg</div><div class="cosmetic-price">\u00a31.99</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83d\udc1d</div><div class="cosmetic-name">Death Message</div><div class="cosmetic-price">\u00a31.99</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83d\udc8d</div><div class="cosmetic-name">Glow Effect</div><div class="cosmetic-price">\u00a32.49</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83e\udeb6</div><div class="cosmetic-name">Wing Particles</div><div class="cosmetic-price">\u00a33.99</div></div>
+        <div class="cosmetic-card"><div class="cosmetic-icon">\ud83c\udf0a</div><div class="cosmetic-name">Aura Effect</div><div class="cosmetic-price">\u00a33.99</div></div>
+      </div>
+
+      <!-- BUNDLES -->
+      <div class="store-section-title"><span>\ud83d\udcbc</span> Money-Saving Bundles</div>
+      <div class="bundle-grid">
+        <div class="bundle-card">
+          <div class="bundle-icon">\ud83e\udd81</div>
+          <div class="bundle-info">
+            <div class="bundle-name">Starter Bundle</div>
+            <div class="bundle-desc">Lion Cub rank + 5 Common keys</div>
+            <div class="bundle-prices">
+              <span class="bundle-old">\u00a310.44</span>
+              <span class="bundle-new">\u00a36.99</span>
+              <span class="bundle-save">Save \u00a33.45</span>
+            </div>
           </div>
-          <div class="feature-card" style="--fc:#3498db;text-align:center;border:2px solid var(--border);">
-            <div style="font-size:14px;font-weight:600;color:#3498db;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Popular</div>
-            <h3>Lion</h3>
-            <div style="font-size:32px;font-weight:900;color:#3498db;margin:12px 0;">£8.99</div>
-            <ul style="list-style:none;text-align:left;margin-bottom:20px;font-size:13px;color:var(--fg-2);">
-              <li style="padding:4px 0;">✅ Blue chat color</li>
-              <li style="padding:4px 0;">✅ /hat + /nick</li>
-              <li style="padding:4px 0;">✅ 5 home slots</li>
-              <li style="padding:4px 0;">✅ Lion prefix</li>
-              <li style="padding:4px 0;">✅ 2 Common crate keys</li>
-            </ul>
-            <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;">Choose Lion</a>
+          <a href="#" class="rank-btn rank-btn-primary" style="--rc:#2ecc71;white-space:nowrap;margin:0;padding:10px 16px;">Buy</a>
+        </div>
+        <div class="bundle-card">
+          <div class="bundle-icon">\ud83d\udc51</div>
+          <div class="bundle-info">
+            <div class="bundle-name">King Bundle</div>
+            <div class="bundle-desc">Lion King rank + 5 Rare keys + 10 Common keys</div>
+            <div class="bundle-prices">
+              <span class="bundle-old">\u00a324.94</span>
+              <span class="bundle-new">\u00a314.99</span>
+              <span class="bundle-save">Save \u00a39.95</span>
+            </div>
           </div>
-          <div class="feature-card" style="--fc:#9b59b6;text-align:center;border:2px solid var(--emerald);position:relative;overflow:visible;">
-            <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--emerald);color:#000;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;">BEST VALUE</div>
-            <div style="font-size:14px;font-weight:600;color:#9b59b6;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Premium</div>
-            <h3>Lion King</h3>
-            <div style="font-size:32px;font-weight:900;color:#9b59b6;margin:12px 0;">£14.99</div>
-            <ul style="list-style:none;text-align:left;margin-bottom:20px;font-size:13px;color:var(--fg-2);">
-              <li style="padding:4px 0;">✅ Purple chat color</li>
-              <li style="padding:4px 0;">✅ /hat + /nick + /particle</li>
-              <li style="padding:4px 0;">✅ 10 home slots</li>
-              <li style="padding:4px 0;">✅ Lion King prefix</li>
-              <li style="padding:4px 0;">✅ 3 Rare crate keys</li>
-              <li style="padding:4px 0;">✅ Custom join message</li>
-            </ul>
-            <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;">Choose Lion King</a>
+          <a href="#" class="rank-btn rank-btn-primary" style="--rc:#9b59b6;white-space:nowrap;margin:0;padding:10px 16px;">Buy</a>
+        </div>
+        <div class="bundle-card">
+          <div class="bundle-icon">\ud83c\udfc6</div>
+          <div class="bundle-info">
+            <div class="bundle-name">Legend Bundle</div>
+            <div class="bundle-desc">Lion Legend rank + 10 Mythic keys + 20 Rare keys</div>
+            <div class="bundle-prices">
+              <span class="bundle-old">\u00a366.89</span>
+              <span class="bundle-new">\u00a339.99</span>
+              <span class="bundle-save">Save \u00a326.90</span>
+            </div>
           </div>
-          <div class="feature-card" style="--fc:#f1c40f;text-align:center;border:2px solid var(--border);">
-            <div style="font-size:14px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Ultimate</div>
-            <h3>Lion Legend</h3>
-            <div style="font-size:32px;font-weight:900;color:var(--gold);margin:12px 0;">£24.99</div>
-            <ul style="list-style:none;text-align:left;margin-bottom:20px;font-size:13px;color:var(--fg-2);">
-              <li style="padding:4px 0;">✅ Gold chat color</li>
-              <li style="padding:4px 0;">✅ All cosmetic commands</li>
-              <li style="padding:4px 0;">✅ 15 home slots</li>
-              <li style="padding:4px 0;">✅ Lion Legend prefix</li>
-              <li style="padding:4px 0;">✅ 5 Mythic crate keys</li>
-              <li style="padding:4px 0;">✅ Custom wing particles</li>
-              <li style="padding:4px 0;">✅ Priority support</li>
-            </ul>
-            <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;">Choose Lion Legend</a>
-          </div>
+          <a href="#" class="rank-btn rank-btn-primary" style="--rc:#f1c40f;white-space:nowrap;margin:0;padding:10px 16px;">Buy</a>
         </div>
       </div>
 
-      <!-- Bundles -->
-      <div style="margin-bottom:48px;">
-        <h3 style="text-align:center;font-size:24px;font-weight:800;margin-bottom:24px;">💎 Bundles</h3>
-        <div class="features-grid">
-          <div class="feature-card" style="--fc:#e67e22;text-align:center;">
-            <div class="feature-icon" style="margin:0 auto 16px;font-size:32px;">💼</div>
-            <h3>Starter Bundle</h3>
-            <p style="font-size:14px;color:var(--fg-2);margin-bottom:8px;">Lion Cub rank + 3 Common keys</p>
-            <div style="font-size:24px;font-weight:800;color:var(--fg-3);text-decoration:line-through;margin-bottom:4px;">£13.96</div>
-            <div style="font-size:32px;font-weight:900;color:var(--emerald);margin-bottom:12px;">£9.99</div>
-            <p style="font-size:12px;color:var(--fg-3);">Save £3.97!</p>
-          </div>
-          <div class="feature-card" style="--fc:#9b59b6;text-align:center;">
-            <div class="feature-icon" style="margin:0 auto 16px;font-size:32px;">👑</div>
-            <h3>King Bundle</h3>
-            <p style="font-size:14px;color:var(--fg-2);margin-bottom:8px;">Lion King rank + 5 Rare keys</p>
-            <div style="font-size:24px;font-weight:800;color:var(--fg-3);text-decoration:line-through;margin-bottom:4px;">£44.94</div>
-            <div style="font-size:32px;font-weight:900;color:var(--emerald);margin-bottom:12px;">£29.99</div>
-            <p style="font-size:12px;color:var(--fg-3);">Save £14.95!</p>
-          </div>
+      <!-- P2W GUARANTEE -->
+      <div class="store-cta">
+        <div class="store-cta-box">
+          <div style="font-size:36px;margin-bottom:12px;">\u2696\ufe0f</div>
+          <h3 style="font-size:20px;font-weight:800;margin-bottom:8px;">No Pay-to-Win. Period.</h3>
+          <p style="color:var(--fg-2);font-size:14px;line-height:1.7;">Every player has the same survival experience. Store items are <strong style="color:var(--emerald);">cosmetic only</strong> \u2014 chat colors, particles, prefixes, and convenience (more homes). No rank gives extra damage, fly, god mode, or P2W kits. <strong style="color:var(--emerald);">Skill wins, not wallet.</strong></p>
         </div>
       </div>
 
-      <!-- No P2W notice -->
-      <div style="text-align:center;max-width:600px;margin:0 auto;padding:32px;background:var(--glass);border:1px solid var(--border);border-radius:14px;">
-        <div style="font-size:32px;margin-bottom:12px;">⚖️</div>
-        <h3 style="font-size:20px;font-weight:700;margin-bottom:8px;">No Pay-to-Win Guarantee</h3>
-        <p style="color:var(--fg-2);font-size:14px;">All store items are <strong style="color:var(--emerald);">cosmetic only</strong>. No rank gives gameplay advantages like extra damage, fly, or P2W kits. Every player has the same survival experience — the store just adds fun cosmetics to support the server.</p>
-      </div>
     </div>
   </section>
 </div>
