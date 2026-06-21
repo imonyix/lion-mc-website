@@ -631,13 +631,33 @@ function loadDynmap(){
 var frame=document.getElementById('dynmapFrame');
 if(!frame)return;
 var dynmapUrl='http://node1.hostingkarle.com:25571/';
-frame.innerHTML='<div style="width:100%;height:100%;display:grid;place-items:center;text-align:center;padding:40px;">'+
+// Try iframe first - some browsers allow it with the right attributes
+frame.innerHTML='<iframe src="'+dynmapUrl+'" style="width:100%;height:100%;border:none" allow="fullscreen" referrerpolicy="no-referrer"></iframe>'+
+'<div id="dynmapFallback" style="position:absolute;inset:0;display:grid;place-items:center;background:var(--bg3);text-align:center;padding:40px;z-index:10">'+
 '<div><div style="font-size:48px;margin-bottom:16px">&#128506;&#65039;</div>'+
-'<p style="color:var(--fg2);font-size:18px;font-weight:600;margin-bottom:8px">Dynmap is available!</p>'+
-'<p style="color:var(--fg3);font-size:14px;margin-bottom:24px">Click below to open the live map in a new tab.</p>'+
-'<a href="'+dynmapUrl+'" target="_blank" class="btn btn-p btn-l">Open Live Map &#8599;</a>'+
-'<p style="color:var(--fg3);font-size:12px;margin-top:16px">The map opens in a new tab because your server uses HTTP while this site uses HTTPS.</p>'+
+'<p style="color:var(--fg2);font-size:18px;font-weight:600;margin-bottom:8px">Live Map</p>'+
+'<p style="color:var(--fg3);font-size:14px;margin-bottom:24px">If the map doesn't load, click below to open it.</p>'+
+'<a href="'+dynmapUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--em);color:#000;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none">Open Live Map &#8599;</a>'+
+'<p style="color:var(--fg3);font-size:12px;margin-top:16px">Browsers block embedded HTTP maps on HTTPS sites.<br>Opening in a new tab works perfectly.</p>'+
 '</div></div>';
+// After 3 seconds, check if the iframe loaded - if it did, hide the fallback
+setTimeout(function(){
+try{
+var iframe=frame.querySelector('iframe');
+if(iframe){
+// Try to detect if iframe loaded
+iframe.onload=function(){
+var fb=document.getElementById('dynmapFallback');
+if(fb)fb.style.display='none';
+};
+// Also hide fallback after 5 seconds as a last resort
+setTimeout(function(){
+var fb=document.getElementById('dynmapFallback');
+if(fb)fb.style.display='none';
+},5000);
+}
+}catch(e){}
+},100);
 }
 
 // PLAYERS
