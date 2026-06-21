@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lion MC — Dynamic Banner</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Inter', -apple-system, sans-serif; }
+.banner-container { position: relative; }
+.banner { width: 600px; height: 200px; border-radius: 16px; overflow: hidden; position: relative; background: linear-gradient(135deg, #0a0d12 0%, #0f131a 50%, #1a2a1a 100%); border: 2px solid rgba(46, 204, 113, 0.3); box-shadow: 0 0 40px rgba(46, 204, 113, 0.15); }
+.banner-bg { position: absolute; inset: 0; opacity: 0.1; background-image: linear-gradient(rgba(46, 204, 113, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(46, 204, 113, 0.5) 1px, transparent 1px); background-size: 20px 20px; }
+.banner-glow { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%); top: -50px; left: -50px; animation: float 8s ease-in-out infinite; }
+.banner-glow2 { position: absolute; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(241, 196, 15, 0.15) 0%, transparent 70%); bottom: -50px; right: -50px; animation: float 10s ease-in-out infinite reverse; }
+@keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 20px); } }
+.banner-content { position: relative; z-index: 2; padding: 24px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.banner-top { display: flex; align-items: center; gap: 12px; }
+.banner-logo { width: 48px; height: 48px; background: linear-gradient(135deg, #2ecc71, #27ae60); border-radius: 12px; display: grid; place-items: center; font-size: 28px; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4); }
+.banner-title { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; color: #fff; }
+.banner-title span { color: #2ecc71; }
+.banner-tag { font-size: 12px; color: #a0a4b0; font-weight: 500; margin-top: 2px; }
+.banner-middle { display: flex; align-items: center; gap: 16px; }
+.status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.3); border-radius: 999px; font-size: 13px; font-weight: 600; color: #2ecc71; }
+.status-pill.offline { background: rgba(231, 76, 60, 0.1); border-color: rgba(231, 76, 60, 0.3); color: #e74c3c; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; box-shadow: 0 0 8px #2ecc71; animation: pulse 2s infinite; }
+.status-dot.offline { background: #e74c3c; box-shadow: 0 0 8px #e74c3c; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.player-count { font-size: 14px; color: #a0a4b0; }
+.player-count strong { color: #fff; font-weight: 700; }
+.banner-bottom { display: flex; align-items: center; justify-content: space-between; }
+.banner-ip { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #2ecc71; background: rgba(0, 0, 0, 0.3); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(46, 204, 113, 0.2); }
+.banner-version { font-size: 12px; color: #5c606c; font-family: 'JetBrains Mono', monospace; }
+.banner-desc { font-size: 11px; color: #5c606c; margin-top: 4px; }
+
+/* Sizes */
+.banner.size-discord { width: 600px; height: 200px; }
+.banner.size-small { width: 400px; height: 140px; }
+.banner.size-small .banner-title { font-size: 20px; }
+.banner.size-small .banner-logo { width: 36px; height: 36px; font-size: 20px; }
+.banner.size-small .banner-ip { font-size: 12px; }
+
+.controls { margin-top: 24px; display: flex; gap: 8px; justify-content: center; }
+.control-btn { padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+.control-btn:hover { background: rgba(46, 204, 113, 0.1); border-color: rgba(46, 204, 113, 0.3); }
+.control-btn.active { background: rgba(46, 204, 113, 0.2); border-color: rgba(46, 204, 113, 0.5); }
+.label { text-align: center; color: #5c606c; font-size: 13px; margin-top: 16px; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div class="banner-container">
+  <div class="banner size-discord" id="banner">
+    <div class="banner-bg"></div>
+    <div class="banner-glow"></div>
+    <div class="banner-glow2"></div>
+    <div class="banner-content">
+      <div class="banner-top">
+        <div class="banner-logo">🦁</div>
+        <div>
+          <div class="banner-title">Lion<span>MC</span></div>
+          <div class="banner-tag">Survival SMP</div>
+        </div>
+      </div>
+      <div class="banner-middle">
+        <div class="status-pill" id="statusPill">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Checking...</span>
+        </div>
+        <div class="player-count" id="playerCount">Loading...</div>
+      </div>
+      <div class="banner-bottom">
+        <div>
+          <div class="banner-ip">node1.hostingkarle.com:25565</div>
+          <div class="banner-version">Java 1.21.4 · No Pay-to-Win</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="banner-desc">discord.gg/VXy4pRqEQN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="control-btn active" onclick="setSize('discord')">Discord (600×200)</button>
+    <button class="control-btn" onclick="setSize('small')">Small (400×140)</button>
+  </div>
+  <div class="label">👆 This is a live banner. Screenshot it for Discord / server lists.</div>
+</div>
+
+<script>
+const SERVER_IP = 'node1.hostingkarle.com';
+const SERVER_PORT = 25565;
+
+async function updateStatus() {
+  const pill = document.getElementById('statusPill');
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  const count = document.getElementById('playerCount');
+
+  try {
+    const res = await fetch('https://api.mcsrvstat.us/3/' + SERVER_IP + ':' + SERVER_PORT);
+    const data = await res.json();
+
+    if (data.online) {
+      text.textContent = 'Online';
+      dot.classList.remove('offline');
+      pill.classList.remove('offline');
+      count.innerHTML = '<strong>' + data.players.online + '</strong> / ' + data.players.max + ' players';
+    } else {
+      text.textContent = 'Offline';
+      dot.classList.add('offline');
+      pill.classList.add('offline');
+      count.innerHTML = '<strong>0</strong> players';
+    }
+  } catch (e) {
+    text.textContent = 'Error';
+    dot.classList.add('offline');
+    pill.classList.add('offline');
+    count.innerHTML = 'Status unavailable';
+  }
+}
+
+function setSize(size) {
+  const banner = document.getElementById('banner');
+  banner.className = 'banner size-' + size;
+  document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+updateStatus();
+setInterval(updateStatus, 30000);
+</script>
+</body>
+</html>
