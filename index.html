@@ -630,7 +630,14 @@ return'<div class="cmc"><div class="cmci">'+c.icon+'</div><div class="cmcn">'+c.
 function loadDynmap(){
 var frame=document.getElementById('dynmapFrame');
 if(!frame)return;
-frame.innerHTML='<iframe src="http://node1.hostingkarle.com:25571/" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
+var dynmapUrl='http://node1.hostingkarle.com:25571/';
+frame.innerHTML='<div style="width:100%;height:100%;display:grid;place-items:center;text-align:center;padding:40px;">'+
+'<div><div style="font-size:48px;margin-bottom:16px">&#128506;&#65039;</div>'+
+'<p style="color:var(--fg2);font-size:18px;font-weight:600;margin-bottom:8px">Dynmap is available!</p>'+
+'<p style="color:var(--fg3);font-size:14px;margin-bottom:24px">Click below to open the live map in a new tab.</p>'+
+'<a href="'+dynmapUrl+'" target="_blank" class="btn btn-p btn-l">Open Live Map &#8599;</a>'+
+'<p style="color:var(--fg3);font-size:12px;margin-top:16px">The map opens in a new tab because your server uses HTTP while this site uses HTTPS.</p>'+
+'</div></div>';
 }
 
 // PLAYERS
