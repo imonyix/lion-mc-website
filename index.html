@@ -760,6 +760,8 @@ function navigate(page) {
   document.getElementById('navLinks').classList.remove('open');
   window.scrollTo(0, 0);
   history.replaceState(null, '', '#' + page);
+  if (page === 'dynmap') setTimeout(loadDynmap, 100);
+  if (page === 'players') setTimeout(loadPlayers, 100);
 }
 
 // Handle back/forward
@@ -967,7 +969,7 @@ document.getElementById('rulesGrid').innerHTML = Object.entries(RULES).map(([cat
 
 document.getElementById('staffGrid').innerHTML = STAFF.map(s => {
   const avatar = s.skin
-    ? '<div style="width:64px;height:64px;margin:0 auto 12px;border-radius:12px;overflow:hidden;border:2px solid ' + s.color + ';background:#161b24;"><img src="https://minotar.net/avatar/' + s.skin + '/64" style="width:64px;height:64px;display:block;" loading="lazy" onerror="this.style.display=\'none\'"></div>'
+    ? '<div style="width:64px;height:64px;margin:0 auto 12px;border-radius:12px;overflow:hidden;border:2px solid ' + s.color + ';background:#161b24;"><img src="https://minotar.net/avatar/' + s.skin + '/64" style="width:64px;height:64px;display:block;" loading="lazy" onerror='this.parentElement.style.display="none"'></div>'
     : '<div class="staff-avatar" style="background:' + s.color + '20; border:2px solid ' + s.color + ';margin:0 auto 12px;">' + s.emoji + '</div>';
   return '<div class="staff-card">' + avatar +
     '<div class="staff-name">' + s.name + '</div>' +
@@ -1050,49 +1052,35 @@ let onlinePlayers = [];
 async function loadPlayers() {
   const grid = document.getElementById('playersGrid');
   if (!grid) return;
-
   try {
-    // Fetch online players from mcsrvstat.us
     const res = await fetch('https://api.mcsrvstat.us/3/node1.hostingkarle.com:25565');
     const data = await res.json();
-
-    if (data.online && data.players && data.players.list) {
+    if (data.online && data.players && data.players.list && data.players.list.length > 0) {
       onlinePlayers = data.players.list;
-    } else if (data.online && data.players) {
-      // Some servers don't expose player names via API
+    } else if (data.online && data.players && data.players.online > 0) {
       onlinePlayers = [];
-      for (let i = 0; i < data.players.online; i++) {
-        onlinePlayers.push({ name: 'Player ' + (i+1), uuid: '', online: true });
+      for (let i = 0; i < Math.min(data.players.online, 20); i++) {
+        onlinePlayers.push({name: 'Player ' + (i+1), uuid: '', online: true});
       }
     } else {
       onlinePlayers = [];
     }
-
-    // Render player cards
     if (onlinePlayers.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--fg-3);"><div style="font-size:48px;margin-bottom:16px;">😴</div><p>No players online right now.</p><p style="font-size:12px;margin-top:8px;">Join the server and be the first!</p></div>';
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--fg-3);"><p>No players online right now.</p></div>';
       return;
     }
-
-    grid.innerHTML = onlinePlayers.map(p => {
-      const name = p.name || p.uuid || 'Unknown';
-      const avatarUrl = p.uuid
-        ? 'https://minotar.net/avatar/' + p.uuid + '/64'
-        : 'https://minotar.net/avatar/' + name + '/64';
-      return '<div class="player-card" data-name="' + name.toLowerCase() + '" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;gap:16px;align-items:center;transition:all 0.2s;cursor:pointer;" onmouseover="this.style.borderColor='var(--emerald)'" onmouseout="this.style.borderColor='var(--border)'">' +
-        '<div style="width:48px;height:48px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#161b24;"><img src="' + avatarUrl + '" style="width:48px;height:48px;display:block;" loading="lazy" onerror="this.style.display=\'none\'"></div>' +
-        '<div style="flex:1;min-width:0;">' +
-        '<div style="font-size:16px;font-weight:700;color:var(--fg);">' + name + '</div>' +
-        '<div style="font-size:12px;color:var(--emerald);font-family:var(--font-mono);margin-top:2px;">● Online</div>' +
-        '</div>' +
-        '</div>';
+    grid.innerHTML = onlinePlayers.map(function(p) {
+      var name = p.name || 'Unknown';
+      var avatarUrl = 'https://minotar.net/avatar/' + (p.uuid || name) + '/64';
+      return '<div class="player-card" data-name="' + name.toLowerCase() + '" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;gap:16px;align-items:center;">' +
+        '<div style="width:48px;height:48px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#161b24;"><img src="' + avatarUrl + '" style="width:48px;height:48px;display:block;" loading="lazy"></div>' +
+        '<div><div style="font-size:16px;font-weight:700;color:var(--fg);">' + name + '</div>' +
+        '<div style="font-size:12px;color:var(--emerald);margin-top:2px;">Online</div></div></div>';
     }).join('');
-
-    allPlayers = onlinePlayers;
-
-  } catch (e) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--fg-3);"><div style="font-size:48px;margin-bottom:16px;">⚠️</div><p>Could not load player data.</p><p style="font-size:12px;margin-top:8px;">Make sure the server is online.</p></div>';
+  } catch(e) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--fg-3);"><p>Could not load player data.</p></div>';
   }
+}
 }
 
 function filterPlayers() {
@@ -1106,14 +1094,6 @@ function filterPlayers() {
   });
   document.getElementById('noPlayers').style.display = visible === 0 && cards.length > 0 ? 'block' : 'none';
 }
-
-// Load data when navigating to those pages
-const originalNavigate = navigate;
-navigate = function(page) {
-  originalNavigate(page);
-  if (page === 'dynmap') loadDynmap();
-  if (page === 'players') loadPlayers();
-};
 
 
 document.getElementById('changelogList').innerHTML = CHANGELOG.map(c => `
